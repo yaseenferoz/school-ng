@@ -100,6 +100,7 @@ export class AboutMeComponent {
     type:this.formType}
     this.formService.editForm(this.id, payload).subscribe(() => {
       this.loadForms();
+      this.editMode=false
     });
   }
 }
