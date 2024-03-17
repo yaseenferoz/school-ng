@@ -11,6 +11,8 @@ import { tap, catchError } from 'rxjs/operators';
 export class AuthService {
   private loggedInSubject: BehaviorSubject<boolean>;
   public loggedIn$: Observable<boolean>;
+  private tokenKey = 'auth_token';
+  private sessionExpirationMinutes = 30;
 
   constructor(private http: HttpClient) {
     this.loggedInSubject = new BehaviorSubject<boolean>(false);
@@ -19,8 +21,9 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>('https://school-backend-fs0m.onrender.com/api/login', { username, password }).pipe(
-      tap(() => {
-        this.loggedInSubject.next(true);
+      tap((response) => {
+        const { token } = response;
+        this.storeToken(token);
       }),
       catchError(error => {
         console.error('Login failed:', error);
@@ -28,13 +31,38 @@ export class AuthService {
       })
     );
   }
+  private storeToken(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
 
   logout(): void {
-    this.loggedInSubject.next(false);
+    localStorage.removeItem(this.tokenKey);
   }
 
   isLoggedIn(): boolean {
-    return this.loggedInSubject.value;
+    const token = this.getToken();
+    return token !== null && !this.isTokenExpired(token);
+  }
+
+  private getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  private isTokenExpired(token: string): boolean {
+    const expiration = this.getTokenExpiration(token);
+    if (!expiration) {
+      return false;
+    }
+    return Date.now() > expiration;
+  }
+
+  private getTokenExpiration(token: string): number | null {
+    try {
+      const { exp } = JSON.parse(atob(token.split('.')[1]));
+      return exp * 1000; // Convert to milliseconds
+    } catch (error) {
+      return null;
+    }
   }
 
   checkLoginStatus(): Observable<boolean> {
