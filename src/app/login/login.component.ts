@@ -11,21 +11,25 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
   constructor(private authService: AuthService, private router: Router) {}
+  errorMessage:any;
 
-
-  login() {
-    this.authService.login(this.username, this.password).subscribe(
-      () => {
-        console.log('Login successful');
-        // Redirect to welcome page
-        this.router.navigate(['/welcome']); // Replace 'welcome' with the appropriate route
-      },
-      error => {
-        console.error('Login failed:', error);
-        // Handle login error (e.g., display error message)
+login() {
+  this.authService.login(this.username, this.password).subscribe(
+    (data: any) => {
+      console.log('Login successful');
+      // Redirect to welcome page
+      this.router.navigate(['/welcome']); // Replace 'welcome' with the appropriate route
+    },
+    (error) => {
+      console.error('Login failed:', error);
+      if (error?.error?.message) {
+        this.errorMessage = error.error.message;
+      } else {
+        this.errorMessage = 'An error occurred during login.';
       }
-    );
-    return false; // Prevent default form submission
-  }
+    }
+  );
+}
+
   
 }

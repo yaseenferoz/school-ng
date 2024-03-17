@@ -1,6 +1,14 @@
-<form (ngSubmit)="login()">
+<form class="ui form" (ngSubmit)="login()">
+  <div class="field">
+    <label>Username</label>
     <input type="text" name="username" [(ngModel)]="username" placeholder="Username">
+  </div>
+  <div class="field">
+    <label>Password</label>
     <input type="password" name="password" [(ngModel)]="password" placeholder="Password">
-    <button type="submit">Login</button>
-  </form>
-  
+  </div>
+  <button class="ui fluid large teal submit button" type="submit">Login</button>
+</form>
+<div *ngIf="errorMessage" class="ui error message">
+  <p>{{ errorMessage }}</p>
+</div>

@@ -30,7 +30,6 @@ export class AuthService {
   }
 
   logout(): void {
-    // Perform any necessary cleanup (e.g., clearing session data)
     this.loggedInSubject.next(false);
   }
 
