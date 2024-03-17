@@ -1,0 +1,61 @@
+<!-- about-me.component.html -->
+<h2>About Me</h2>
+
+<table class="ui celled table">
+  <thead>
+    <tr>
+      <th>Form Label Name</th>
+      <th>Form Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of forms">
+      <td>{{ item.label }}</td>
+      <td>{{ item.type }}</td>
+      <td>
+        <div class="ui small basic buttons">
+          <button class="ui button" (click)="editItem(item)">Edit</button>
+          <button class="ui button" (click)="showDeleteConfirmation(item)">Delete</button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button class="ui primary button" (click)="showAddForm()">Add New</button>
+
+<!-- Add Form Modal -->
+<div class="ui modal" [class.active]="showAddFormModal">
+    <i class="close icon" (click)="hideAddForm()"></i>
+    <div *ngIf="!editMode" class="header">Add New Form</div>
+    <div *ngIf="editMode" class="header">EditForm</div>
+    <div class="content">
+      <div class="ui form">
+        <div class="field">
+          <label>Form Label Name</label>
+          <input type="text" [(ngModel)]="formLabel" placeholder="Form Label Name">
+        </div>
+        <div class="field">
+          <label>Form Type</label>
+          <input type="text" [(ngModel)]="formType" placeholder="Form Type">
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button *ngIf="!editMode" class="ui primary button" (click)="addForm()">Submit</button>
+      <button *ngIf="editMode" class="ui primary button" (click)="editForm()">Edit</button>
+      <button class="ui button" (click)="hideAddForm()">Cancel</button>
+    </div>
+  </div>
+  
+  <!-- Delete Confirmation Modal -->
+  <div class="ui modal" [class.active]="showDeleteConfirmationModal">
+    <i class="close icon" (click)="hideDeleteConfirmation()"></i>
+    <div class="header">Delete Item</div>
+    <div class="content">Are you sure you want to delete this item?</div>
+    <div class="actions">
+      <button class="ui negative button" (click)="confirmDelete()">Confirm</button>
+      <button class="ui button" (click)="hideDeleteConfirmation()">Cancel</button>
+    </div>
+  </div>
