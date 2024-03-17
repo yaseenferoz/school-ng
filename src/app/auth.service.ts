@@ -18,7 +18,7 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post<any>('http://localhost:3000/api/login', { username, password }).pipe(
+    return this.http.post<any>('https://school-backend-fs0m.onrender.com/api/login', { username, password }).pipe(
       tap(() => {
         this.loggedInSubject.next(true);
       }),
