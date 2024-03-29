@@ -6,13 +6,14 @@
     <tr>
       <th>Form Label Name</th>
       <th>Form Type</th>
-      <th>Actions</th>
+      <th>Options</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let item of forms">
       <td>{{ item.label }}</td>
       <td>{{ item.type }}</td>
+      <td>{{ item.options }}</td>
       <td>
         <div class="ui small basic buttons">
           <button class="ui button" (click)="editItem(item)">Edit</button>
@@ -37,14 +38,26 @@
           <input type="text" [(ngModel)]="formLabel" placeholder="Form Label Name">
         </div>
         <div class="field">
-          <label>Form Type</label>
-          <input type="text" [(ngModel)]="formType" placeholder="Form Type">
+            <label>Form Type</label>
+            <select [(ngModel)]="formType" (change)="onFormTypeChange()">
+                <option value="text">Text</option>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="radio">Radio</option>
+                <option value="checkbox">Checkbox</option>
+                <option value="file">File</option>
+            </select>
+        </div>
+        <div *ngIf="formType === 'dropdown' || formType === 'radio' || formType === 'checkbox'" class="field">
+            <label>Options</label>
+            <input type="text" [(ngModel)]="options" placeholder="Enter options separated by commas">
         </div>
       </div>
     </div>
     <div class="actions">
-      <button *ngIf="!editMode" class="ui primary button" (click)="addForm()">Submit</button>
-      <button *ngIf="editMode" class="ui primary button" (click)="editForm()">Edit</button>
+      <button *ngIf="!editMode"  [disabled]="!formLabel"  class="ui primary button" (click)="addForm()">Submit</button>
+      <button *ngIf="editMode" [disabled]="!formLabel" class="ui primary button" (click)="editForm()">Edit</button>
       <button class="ui button" (click)="hideAddForm()">Cancel</button>
     </div>
   </div>

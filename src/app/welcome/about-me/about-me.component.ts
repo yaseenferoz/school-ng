@@ -7,22 +7,25 @@ import { FormService } from '../services/form.service';
   styleUrls: ['./about-me.component.css']
 })
 export class AboutMeComponent {
-  formData: any[] = [
-    { label: 'Name', type: 'Text' },
-    { label: 'Email', type: 'Email' }
-  ];
   forms!: any[];
   editMode!: boolean;
   id: any;
+  showOptionsField!: boolean;
+options: any;
   constructor(private formService: FormService) {}
   showAddFormModal = false;
   showDeleteConfirmationModal = false;
   formLabel:any
   formType:any
-  newItem: any = {};
   ngOnInit(): void {
     this.loadForms();
   }
+  resetForm() {
+    this.formLabel = '';
+    this.formType = 'text';
+    this.options = '';
+  }
+
   loadForms(): void {
     this.formService.getForms().subscribe(forms => {
       this.forms = forms;
@@ -30,8 +33,9 @@ export class AboutMeComponent {
   }
   addForm(): void {
     const payload ={
-      "label":this.formLabel,
-      "type":this.formType
+      label:this.formLabel,
+      type:this.formType,
+      options:this.options
     }
     this.formService.addForm(payload).subscribe(() => {
       this.loadForms();
@@ -39,34 +43,31 @@ export class AboutMeComponent {
     });
   }
 
-  deleteForm(id: string): void {
-    this.formService.deleteForm(id).subscribe(() => {
-      this.loadForms();
-    });
-  }
-  // Function to display the add form
+
   showAddForm(): void {
     this.showAddFormModal = true;
-    this.newItem = {}; // Clear the newItem object
   }
 
-  // Function to hide the add form
   hideAddForm(): void {
     this.showAddFormModal = false;
+   this.resetForm();
+   this.editMode=!this.editMode
   }
 
-  // Function to submit the add form
-  submitAddForm(): void {
-    // Logic to submit the form and add a new item
-    this.formData.push(this.newItem); // Add new item to formData array
-    this.hideAddForm(); // Hide the modal
-  }
 
+  onFormTypeChange() {
+    if (this.formType === 'dropdown' || this.formType === 'radio' || this.formType === 'checkbox') {
+      // Show the options field
+      this.showOptionsField = true;
+    } else {
+      // Hide the options field for other form types
+      this.showOptionsField = false;
+    }
+  }
   // Function to display the delete confirmation modal
   showDeleteConfirmation(item: any): void {
     this.id=item._id
     this.showDeleteConfirmationModal = true;
-    // Store the item to be deleted in a variable or use it directly in confirmDelete()
   }
 
   // Function to hide the delete confirmation modal
@@ -84,11 +85,12 @@ export class AboutMeComponent {
 
   // Function to edit an item
   editItem(item: any): void {
-    console.log(item._id);
+    console.log(item);
     
     this.editMode=true
     this.formLabel=item.label
     this.formType=item.type
+    this.options=item?.options
     this.id=item._id
     this.showAddForm(); // Show the add form modal with prepopulated values
   }
@@ -97,7 +99,8 @@ export class AboutMeComponent {
     
     const payload = {
       label:this.formLabel,
-    type:this.formType}
+    type:this.formType,
+    options:this.options}
     this.formService.editForm(this.id, payload).subscribe(() => {
       this.loadForms();
       this.editMode=false

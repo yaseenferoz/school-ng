@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FormService {
-  private apiUrl = 'https://school-backend-fs0m.onrender.com/api/forms'; // Assuming your backend server is running on the same domain
+  private apiUrl = 'http://localhost:3000/api/forms'; // Assuming your backend server is running on the same domain
 
   constructor(private http: HttpClient) {}
 
